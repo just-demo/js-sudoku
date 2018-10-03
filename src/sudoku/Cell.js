@@ -1,8 +1,11 @@
 import _ from 'lodash';
 import Value from './Value';
+import Sudoku from "./Sudoku";
+import Utils from "./Utils";
 
 class Cell {
-    constructor(row, col, block) {
+    constructor(sudoku: Sudoku, row: number, col: number, block: number) {
+        this.sudoku = sudoku;
         this.row = row;
         this.col = col;
         this.block = block;
@@ -16,14 +19,14 @@ class Cell {
 
     open(value: Value) {
         this.value = value;
-        this.candidates.forEach((candidate) => candidate.removeCandidate(this));
+        this.candidates.forEach(candidate => candidate.removeCandidate(this));
         this.candidates = [];
         value.open(this);
-        // TODO: move outside?
-        // pendingCells.remove(this);
-        // pendingCells.stream()
-        // .filter(this::isRelated)
-        // .forEach(pendingCell -> pendingCell.removeCandidate(value));
+        // TODO: reduce coupling
+        Utils.remove(this.sudoku.pendingCells, this);
+        this.sudoku.pendingCells
+            .filter(cell => this.isRelated(cell))
+            .forEach(cell => cell.removeCandidate(value));
     }
 
     isRelated(cell: Cell) : boolean {
@@ -47,7 +50,7 @@ class Cell {
         return this.candidates;
     }
 
-    getValue() { // Integer
+    getValue() : number {
         return this.value ? this.value.getValue() : 0;
     }
 }

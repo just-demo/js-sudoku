@@ -1,8 +1,11 @@
 import _ from 'lodash';
 import Cell from './Cell';
+import Sudoku from './Sudoku';
+import Utils from "./Utils";
 
 class Value {
-    constructor(value) {
+    constructor(sudoku: Sudoku, value: number) {
+        this.sudoku = sudoku; //List<Value>
         this.cells = []; //Collection<Cell>
         this.candidates = []; //Collection<Collection<Cell>>
         this.value = value; // Integer
@@ -21,17 +24,16 @@ class Value {
         this.candidates.sort((group1, group2) => group1.length - group2.length);
     }
 
-    open(cell: Cell) : number {
+    open(cell: Cell) {
         this.removeCandidate(cell);
         this.cells.push(cell);
-        // TODO: move it outside Value class?
-        // if (cells.size() == size) {
-        //     this.pendingValues.remove(this);
-        // }
-        return this.cells.length;
+        // TODO: reduce coupling
+        if (this.cells.length === this.sudoku.size) {
+            Utils.remove(this.sudoku.pendingValues, this);
+        }
     }
 
-    getValue() { // Integer
+    getValue() : number {
         return this.value;
     }
 

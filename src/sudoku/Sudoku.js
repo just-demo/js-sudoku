@@ -25,7 +25,7 @@ import _ from 'lodash';
 import Cell from "./Cell";
 import Value from "./Value";
 
-class Solver {
+class Sudoku {
     constructor(initialValues: number[][]){
         this.size = initialValues.length;
         this.allCells = []; // List<Cell>
@@ -33,13 +33,13 @@ class Solver {
         this.pendingValues = []; // List<Value>
 
         const blockSize = Math.sqrt(this.size);
-        const valueMap = _.range(this.size).map(value => new Value(value + 1)); //Map<Integer, Value>
+        const valueMap = _.range(this.size).map(value => new Value(this, value + 1)); //Map<Integer, Value>
         const openCells = new Map(); //  Map<Cell, Value>
 
         for (let row = 0; row < this.size; row++) {
             for (let col = 0; col < this.size; col++) {
                 const block = blockSize * Math.floor(row / blockSize) + Math.floor(col / blockSize);
-                const cell = new Cell(row, col, block);
+                const cell = new Cell(this, row, col, block);
                 this.allCells.push(cell);
                 const value = initialValues[row][col]; // Integer
                 if (value) {
@@ -57,7 +57,7 @@ class Solver {
 
     solve(): number[][] {
         while (this.pendingCells.length) {
-            if (this.pendingValues.length) {
+            if (!this.pendingValues.length) {
                 throw new NoSolutionException();
             }
 
@@ -100,7 +100,7 @@ class Solver {
                 const nextGuess = this.copyState(); // Integer[][]
                 nextGuess[guessCell.row][guessCell.col] = guessValue.getValue();
                 try {
-                    solutions.push(new Solver(nextGuess).solve());
+                    solutions.push(new Sudoku(nextGuess).solve());
                 } catch (e) {
                     if (!(e instanceof NoSolutionException)) {
                         throw e;
@@ -136,4 +136,4 @@ class NoSolutionException extends Error {
 class MultipleSolutionsException extends Error {
 }
 
-export default Solver;
+export default Sudoku;
