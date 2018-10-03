@@ -101,9 +101,10 @@ class Sudoku {
                 nextGuess[guessCell.row][guessCell.col] = guessValue.getValue();
                 try {
                     solutions.push(new Sudoku(nextGuess).solve());
-                } catch (e) {
-                    if (!(e instanceof NoSolutionException)) {
-                        throw e;
+                } catch (error) {
+                    // (error instanceof NoSolutionException) does not work for some reason...
+                    if (error.name !== NoSolutionException.name) {
+                        throw error;
                     }
                     // Our guess did not work, let's try another one
                 }
@@ -131,9 +132,17 @@ class Sudoku {
 }
 
 class NoSolutionException extends Error {
+    constructor() {
+        super();
+        this.name = NoSolutionException.name;
+    }
 }
 
 class MultipleSolutionsException extends Error {
+    constructor() {
+        super();
+        this.name = MultipleSolutionsException.name;
+    }
 }
 
 export default Sudoku;
