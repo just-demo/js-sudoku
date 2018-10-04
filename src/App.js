@@ -6,6 +6,12 @@ import Utils from "./sudoku/Utils";
 
 class App extends Component {
 
+    fetchAndSolve() {
+        fetch('data.txt')
+            .then(data => data.text())
+            .then(data => this.solve(data));
+    }
+
     solve(lines) {
         let maxTime = -1;
         lines.split("\n").filter(line => line).forEach(line => {
@@ -38,10 +44,7 @@ class App extends Component {
     }
 
     render() {
-
-        fetch('data.txt')
-            .then(data => data.text())
-            .then(data => this.solve(data));
+        //this.fetchAndSolve();
 
         const input = '....7.26.........4......39....1.....4.9.8.7.....2.6.18693........45....1.5.9.....';
         const output = '938471265527639184146852397862147539419385726375296418693714852284563971751928643';
