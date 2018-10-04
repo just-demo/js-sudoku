@@ -7,7 +7,7 @@ import Utils from "./sudoku/Utils";
 class App extends Component {
 
     fetchAndSolve() {
-        fetch('data.txt')
+        fetch('data-simple.txt')
             .then(data => data.text())
             .then(data => this.solve(data));
     }
