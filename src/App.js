@@ -39,7 +39,7 @@ class App extends Component {
 
     render() {
 
-        fetch('data.txt')
+        fetch('data-simple.txt')
             .then(data => data.text())
             .then(data => this.solve(data));
 
