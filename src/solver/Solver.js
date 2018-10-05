@@ -25,7 +25,7 @@ import _ from 'lodash';
 import Cell from "./Cell";
 import Value from "./Value";
 
-class Sudoku {
+class Solver {
     constructor(initialValues: number[][]){
         this.size = initialValues.length;
         this.allCells = []; // List<Cell>
@@ -100,7 +100,7 @@ class Sudoku {
                 const nextGuess = this.copyState(); // Integer[][]
                 nextGuess[guessCell.row][guessCell.col] = guessValue.getValue();
                 try {
-                    solutions.push(new Sudoku(nextGuess).solve());
+                    solutions.push(new Solver(nextGuess).solve());
                 } catch (error) {
                     // (error instanceof NoSolutionException) does not work for some reason...
                     if (error.name !== NoSolutionException.name) {
@@ -145,4 +145,4 @@ class MultipleSolutionsException extends Error {
     }
 }
 
-export default Sudoku;
+export default Solver;

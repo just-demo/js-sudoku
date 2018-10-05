@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import Cell from './Cell';
-import Sudoku from './Sudoku';
+import Solver from './Solver';
 import Utils from "./Utils";
 
 class Value {
-    constructor(sudoku: Sudoku, value: number) {
+    constructor(sudoku: Solver, value: number) {
         this.sudoku = sudoku; //List<Value>
         this.cells = []; //Collection<Cell>
         this.candidates = []; //Collection<Collection<Cell>>

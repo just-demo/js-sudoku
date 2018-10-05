@@ -1,32 +1,36 @@
 import React, {Component} from "react";
 import Square from "./Square";
+import Utils from "./solver/Utils";
 
 class Board extends Component {
+    constructor(props) {
+        super(props);
+        this.source = Utils.parseSimpleString(props.source);
+        this.target = Utils.parseSimpleString(props.target);
+        this.size = Math.sqrt(this.target.length);
+        this.state = {
+            values: this.source
+        }
+    }
+
 
     renderSquare(i) {
+        //<Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)}/>
         return (
-            <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)}/>
+            <Square value={i} onClick={() => this.props.onClick(i)}/>
         );
     }
 
     render() {
         return (
-            <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+            <div className="board">
+                {this.state.values.map(row => (
+                    <div className="board-row">
+                        {row.map(col => (
+                            <Square value={col}/>
+                        ))}
+                    </div>
+                ))}
             </div>
         );
     }

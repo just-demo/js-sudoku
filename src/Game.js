@@ -59,6 +59,8 @@ class Game extends Component {
             <div className="game">
                 <div className="game-board">
                     <Board
+                        source="....7.26.........4......39....1.....4.9.8.7.....2.6.18693........45....1.5.9....."
+                        target="938471265527639184146852397862147539419385726375296418693714852284563971751928643"
                         squares={current.squares}
                         onClick={(i) => this.handleClick(i)}
                     />

@@ -15,7 +15,7 @@ class Utils {
 
     static parseSimpleString(flat: String): number[][] {
         const size = Math.sqrt(flat.length);
-        const values = flat.replace(/\./g, '0').split('');
+        const values = flat.replace(/\./g, '0').split(''); //.map(parseInt); // TODO: simplify!!!
         const matrix = [];
         for (let row = 0; row < size; row++) {
             for (let col = 0; col < size; col++) {

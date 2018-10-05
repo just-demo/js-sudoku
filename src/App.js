@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Sudoku from './sudoku/Sudoku.js'
-import Utils from "./sudoku/Utils";
+import Solver from './solver/Solver.js'
+import Utils from "./solver/Utils";
 
 class App extends Component {
 
@@ -22,7 +22,7 @@ class App extends Component {
             const initialValues = Utils.parseSimpleString(input);
             // const startTime = performance.now();
             const startTime = new Date().getTime();
-            const solution = new Sudoku(initialValues).solve();
+            const solution = new Solver(initialValues).solve();
             // const endTime = performance.now();
             const endTime = new Date().getTime();
             const time = endTime - startTime;
@@ -51,7 +51,7 @@ class App extends Component {
 
         // const initialValues = Utils.parseSimpleString(input);
         // console.log(initialValues);
-        // const solution = new Sudoku(initialValues).solve();
+        // const solution = new Solver(initialValues).solve();
         // console.log(Utils.asSimpleString(solution));
         // console.log(output == );
 
