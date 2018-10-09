@@ -43,7 +43,14 @@ class App extends Component {
         console.log('Max time: ' + maxTime);
     }
 
+    fetchBankRates() {
+        fetch('bank-rates.json')
+            .then(rates => rates.json())
+            .then(rates => console.log(rates));
+    }
+
     render() {
+        this.fetchBankRates();
         //this.fetchAndSolve();
 
         const input = '....7.26.........4......39....1.....4.9.8.7.....2.6.18693........45....1.5.9.....';
