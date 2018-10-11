@@ -1,27 +1,36 @@
 import React, {Component} from 'react';
 import './App.css';
 import _ from 'lodash';
+import 'bootstrap/dist/css/bootstrap.css'
 
 class AppBanks extends Component {
-    fetchBankRates() {
-        fetch('bank-rates.json')
-            .then(rates => rates.json())
-            .then(rates => this.initState(rates));
+    constructor(props) {
+        super(props);
+        this.state = {banks: {}};
+        fetch('banks.json')
+            .then(banks => banks.json())
+            .then(banks => this.setState({banks: banks}));
     }
 
-    initState(rates) {
+    fetchBankRatings() {
+        fetch('bank-ratings.json')
+            // .then(ratings => ratings.json())
+            .then(ratings => this.initState(ratings));
+    }
+
+    initState(ratings) {
         // const date = '2018-07-01';
-        // for (let date in rates) {
-        //     const banks = rates[date];
+        // for (let date in ratings) {
+        //     const banks = ratings[date];
         //     console.log(date);
         //     console.log(banks);
         // }
 
         const bankIds = new Set();
-        _.forOwn(rates, (dateRates, date) => {
+        _.forOwn(ratings, (dateRatings, date) => {
             // console.log(date);
-            // console.log(bankRates);
-            _.forOwn(dateRates, (companyRates, bankId) => {
+            // console.log(bankRatings);
+            _.forOwn(dateRatings, (companyRatings, bankId) => {
                 bankIds.add(bankId);
             });
 
@@ -31,11 +40,15 @@ class AppBanks extends Component {
     }
 
     render() {
-        this.fetchBankRates();
-
         return (
-            <div className="Banks">
-                It works!!!
+            <div>
+                <ul className="banks">
+                    {Object.keys(this.state.banks).map(bankId => (
+                        <li key={bankId} className="bank">
+                            {bankId} - {this.state.banks[bankId]}
+                        </li>
+                    ))}
+                </ul>
             </div>
         );
     }

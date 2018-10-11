@@ -44,7 +44,7 @@ class App extends Component {
     }
 
     fetchBankRates() {
-        fetch('bank-rates.json')
+        fetch('bank-ratings.json')
             .then(rates => rates.json())
             .then(rates => console.log(rates));
     }
