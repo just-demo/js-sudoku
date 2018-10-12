@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import './App.css';
 import _ from 'lodash';
 import 'bootstrap/dist/css/bootstrap.css'
+import Scale from './Scale';
 
 class AppBanks extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            scale: 1,
             banks: {},
             ratings: {}
         };
@@ -56,6 +58,7 @@ class AppBanks extends Component {
 
         return (
             <div>
+                <Scale value={this.state.scale} min={1} max={100} onChange={(scale) => this.setState({scale: scale})}/>
                 <table className="banks">
                     <tbody>
                     <tr>
@@ -83,15 +86,23 @@ class AppBanks extends Component {
             return {};
         }
 
-        // TODO: make yellow in the middle!!!
-        // 2 - red, 5 - green
-        let points = Math.max(0, Math.min(5, rating) - 2);
-        points = Math.round(points * 3) / 3; // TODO: make it configurable in UI!!!, show range matrix with color=from-to
-
-        const red = Math.round(255 * ((3 - points) / 3));
-        const green = Math.round(255 * (points / 3));
+        // TODO: make it configurable in UI!
+        // TODO: show range per color matrix with color=from-to
+        const max = 5; // green - rgb(0, 128, 0)
+        const middle = 3; // yellow - rgb(255, 255, 0)
+        const min = 1; // red - rgb(255, 0, 0)
+        const scale = this.state.scale;
+        rating = Math.max(min, Math.min(max, rating)); // truncate
+        rating = Math.floor(rating * scale) / scale; // resolution
+        const red = rating <= middle ? 255 : this.scale(rating, middle, 255, max, 0);
+        const green = rating >= middle ? this.scale(rating, middle, 255, max, 128) : this.scale(rating, min, 0, middle, 255);
         const blue = 0;
         return {backgroundColor: `rgb(${red}, ${green}, ${blue})`};
+        // return {backgroundColor: `yellow`};
+    }
+
+    scale(key, minKey, minValue, maxKey, maxValue) {
+        return Math.round(minValue + (maxValue - minValue) * (key - minKey) / (maxKey - minKey));
     }
 }
 
