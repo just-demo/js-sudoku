@@ -13,9 +13,7 @@ class AppBanks extends Component {
             ratings: {}
         };
 
-        //"js-s62"
-
-        fetch('banks.json')
+        fetch('bank-details.json')
             .then(banks => banks.json())
             .then(banks => this.setState({banks: banks}));
 
@@ -26,6 +24,7 @@ class AppBanks extends Component {
     }
 
     render() {
+        // http://www.fg.gov.ua/uchasnyky-fondu
         const dates = Object.keys(this.state.ratings).sort().reverse();
         const latestRating = {};
         _.forOwn(this.state.ratings, (dateRating, date) => {
@@ -63,13 +62,15 @@ class AppBanks extends Component {
                     <tbody>
                     <tr>
                         <th>&nbsp;</th>
+                        <th>&nbsp;</th>
                         {dates.map(date => (
-                            <th>{date}</th>
+                            <th className="vertical-bottom-to-top">{date}</th>
                         ))}
                     </tr>
                     {bankIds.map(bankId => (
                         <tr key={bankId}>
-                            <td>{this.state.banks[bankId]} ({bankId})</td>
+                            <td><a href={`https://minfin.com.ua/ua/company/${this.state.banks[bankId].alias}`}>{this.state.banks[bankId].name}</a></td>
+                            <td><a href={this.state.banks[bankId].site}>{((this.state.banks[bankId].site || '').match(/\/\/([^/]+)/) || [])[1]}</a></td>
                             {dates.map(date => (
                                 <td style={this.styleForRating(this.state.ratings[date][bankId])}>{this.state.ratings[date][bankId] || '-'}</td>
                             ))}
