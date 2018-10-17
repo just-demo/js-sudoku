@@ -2,6 +2,26 @@ let utils = require('./utils');
 let path = require('path');
 
 module.exports = {
+    getBanks: function() {
+        const banks = {};
+        utils.fromJson(utils.readFile(this.jsonActiveBanksFile())).forEach(bank => {
+            const id = bank.toLowerCase();
+            if (banks[id]) {
+                console.log(id + ': ' + bank + ' != ' + banks[id]);
+            }
+            banks[id] = bank;
+        });
+
+        utils.fromJson(utils.readFile(this.jsonNotPayingBanksFile())).forEach(bank => {
+            const id = bank.name.toLowerCase();
+            if (banks[id]) {
+                console.log(id + ': ' + bank.name + ' != ' + banks[id]);
+            }
+            banks[id] = bank.name;
+        });
+        return banks;
+    },
+
     ////////// html \\\\\\\\\\
     fetchAndSaveAllHtml: function(){
         // this.fetchAndSaveActiveBanks();

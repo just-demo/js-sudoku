@@ -1,5 +1,6 @@
 let minfin = require('./minfin');
 let fg = require('./fg');
 
-// minfin.fetchAndSaveAllHtml();
-fg.fetchAndSaveAllHtml();
+minfin.fetchAndSaveAllHtml();
+// fg.fetchAndSaveAllHtml();
+// console.log(fg.getBanks());

@@ -23,7 +23,7 @@ module.exports = {
     },
 
     fetchAndSaveBanks: function() {
-        utils.writeFile(this.htmlBanksFile(), utils.readURL('https://minfin.com.ua/banks/all/'));
+        utils.writeFile(this.htmlBanksFile(), utils.readURL('https://minfin.com.ua/ua/banks/all/'));
     },
 
     fetchAndSaveRatings: function() {
@@ -31,7 +31,7 @@ module.exports = {
     },
 
     fetchAndSaveRating(date) {
-        utils.writeFile(this.htmlRatingsFile(date), utils.readURL('https://minfin.com.ua/banks/rating/?date=' + date));
+        utils.writeFile(this.htmlRatingsFile(date), utils.readURL('https://minfin.com.ua/ua/banks/rating/?date=' + date));
     },
 
     fetchAndSaveBankDetails: function() {
@@ -47,7 +47,7 @@ module.exports = {
 
     ////////// json \\\\\\\\\\
     extractAndSaveBankNames: function() {
-        utils.writeFile(this.jsonBanksFile(), JSON.stringify(this.extractBankNames(), null, 2));
+        utils.writeFile(this.jsonBanksFile(), utils.toJson(this.extractBankNames()));
     },
 
     extractAndSaveBankDetails: function() {
@@ -56,19 +56,19 @@ module.exports = {
             const html = utils.readFile(this.htmlBankFile(bank.alias));
             const regex = /<div class="item-title">Офіційний сайт<\/div>[\S\s]+?<a.*? href="(.+?)" target="_blank">/g;
             let matches;
-            while (matches = regex.exec(html)) {
+            while ((matches = regex.exec(html))) {
                 bank.site = matches[1];
             }
         });
-        utils.writeFile(this.jsonBankDetailsFile(), JSON.stringify(banks, null, 2));
+        utils.writeFile(this.jsonBankDetailsFile(), utils.toJson(banks));
     },
 
     extractBankNames: function() {
         const html = utils.readFile(this.htmlBanksFile());
         const banks = {};
-        const regex = /class="bank-emblem--desktop"[\S\s]+?\/company\/(.+?)\/[\S\s]+?<a href="\/company\/(.+?)\/">(.+?)<\/a>/g;
+        const regex = /class="bank-emblem--desktop"[\S\s]+?\/company\/(.+?)\/[\S\s]+?<a href="\/ua\/company\/(.+?)\/">(.+?)<\/a>/g;
         let matches;
-        while (matches = regex.exec(html)) {
+        while ((matches = regex.exec(html))) {
             banks[matches[1]] = {
                 alias: matches[2],
                 name: matches[3]
@@ -77,41 +77,19 @@ module.exports = {
         return banks;
     },
 
-    /*
-    ...
-    <td class="sustain-rating--table-td number-column" data-id="58">
-    <div style="height: 0; width: 0;" id="place1"></div>
-    ...
-    </td>
-    <td class="sustain-rating--table-td" data-title="Общий рейтинг"><span class="fixedNumber">4.56</span>
-    &nbsp;<div class="sustain-rating--table-stars" data-sort="1">
-    ...
-    </td>
-    <td class="sustain-rating--table-td" data-title="Стрессо-устойчивость">4.6</td>
-    <td class="sustain-rating--table-td" data-title="Лояльность вкладчиков">4.4</td>
-    <td class="sustain-rating--table-td" data-title="Оценкааналитиков">4.82</td>
-    <td class="sustain-rating--table-td more" data-title="Место в рэнкинге по депозитам физлиц ">
-    <span>5
-    <div title="Нажмите, чтобы увидеть дополнительную информацию"></div>
-    </span>
-    ...
-    Overall rating
-    Stress resistance
-    Depositors loyalty
-    */
     extractAndSaveBankRatings: function() {
         const ratings = {};
         this.dates.forEach(date => {
             const dateRatings = {};
             const html = utils.readFile(this.htmlRatingsFile(date));
-            const regex = /data-id="(.+?)"[\S\s]+?data-title="Общий рейтинг"><span.*?>(.+?)<\/span>/g;
+            const regex = /data-id="(.+?)"[\S\s]+?data-title="Загальний рейтинг"><span.*?>(.+?)<\/span>/g;
             let matches;
-            while (matches = regex.exec(html)) {
+            while ((matches = regex.exec(html))) {
                 dateRatings[matches[1]] = matches[2];
             }
             ratings[date] = dateRatings;
         });
-        utils.writeFile(this.jsonRatingsFile(), JSON.stringify(ratings, null, 2));
+        utils.writeFile(this.jsonRatingsFile(), utils.toJson(ratings));
     },
 
     extractAndSaveBankRatingDetails: function() {
@@ -120,11 +98,11 @@ module.exports = {
             const html = utils.readFile(this.htmlRatingsFile(date));
             const regex = /<script>\s*data\s*=([^;]+);\s*<\/script>/g;
             let matches;
-            while (matches = regex.exec(html)) {
+            while ((matches = regex.exec(html))) {
                 ratings[date] = JSON.parse(matches[1].replace(/(\d+):/g, '"$1":').replace(/'/g, '"'));
             }
         });
-        utils.writeFile(this.jsonRatingDetailsFile(), JSON.stringify(ratings, null, 2));
+        utils.writeFile(this.jsonRatingDetailsFile(), utils.toJson(ratings));
     },
 
     ////////// files \\\\\\\\\\

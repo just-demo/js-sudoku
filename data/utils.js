@@ -28,5 +28,9 @@ module.exports = {
 
     toJson: function(object) {
         return JSON.stringify(object, null, 2);
+    },
+
+    fromJson: function (json) {
+        return JSON.parse(json);
     }
 };
