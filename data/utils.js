@@ -14,6 +14,10 @@ module.exports = {
         return fs.readFileSync(file, 'utf8');
     },
 
+    fileExists: function(file) {
+        return fs.existsSync(file);
+    },
+
     readURL: function(url) {
         return request('GET', url, {
             headers: {

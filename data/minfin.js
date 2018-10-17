@@ -13,10 +13,10 @@ module.exports = {
 
     ////////// html \\\\\\\\\\
     fetchAndSaveAllHtml: function(){
-        //this.fetchAndSaveBanks();
-        //this.fetchAndSaveRatings();
+        this.fetchAndSaveBanks();
+        this.fetchAndSaveRatings();
         this.extractAndSaveBankNames();
-        // this.fetchAndSaveBankDetails();
+        this.fetchAndSaveBankDetails();
         this.extractAndSaveBankDetails();
         this.extractAndSaveBankRatings();
         this.extractAndSaveBankRatingDetails();
@@ -38,7 +38,10 @@ module.exports = {
         const banks = this.extractBankNames();
         Object.values(banks).forEach(bank => {
             console.log(bank.alias);
-            utils.writeFile(this.htmlBankFile(bank.alias), utils.readURL("https://minfin.com.ua/ua/company/" + bank.alias + '/'));
+            const file = this.htmlBankFile(bank.alias);
+            if (!utils.fileExists(file)) {
+                utils.writeFile(file, utils.readURL("https://minfin.com.ua/ua/company/" + bank.alias + '/'));
+            }
         });
     },
 
