@@ -24,5 +24,9 @@ module.exports = {
                 'User-Agent': 'javascript'
             }
         }).getBody('utf8');
+    },
+
+    toJson: function(object) {
+        return JSON.stringify(object, null, 2);
     }
 };

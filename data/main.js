@@ -1,3 +1,5 @@
 let minfin = require('./minfin');
+let fg = require('./fg');
 
-minfin.fetchAndSaveAllHtml();
+// minfin.fetchAndSaveAllHtml();
+fg.fetchAndSaveAllHtml();
