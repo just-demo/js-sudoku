@@ -11,6 +11,18 @@ module.exports = {
         '2013-10-01', '2013-07-01', '2013-04-01', '2013-01-01',
     ],
 
+    getBanks: function() {
+        const banks = {};
+        Object.values(utils.fromJson(utils.readFile(this.jsonBanksFile()))).forEach(bank => {
+            const id = bank.name.toLowerCase();
+            if (banks[id]) {
+                console.log(id + ': ' + bank.name + ' != ' + banks[id]);
+            }
+            banks[id] = bank.name;
+        });
+        return banks;
+    },
+
     ////////// html \\\\\\\\\\
     fetchAndSaveAllHtml: function(){
         this.fetchAndSaveBanks();

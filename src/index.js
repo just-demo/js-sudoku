@@ -4,5 +4,6 @@ import './index.css';
 import App from "./App";
 import Game from "./Game";
 import AppBanks from "./AppBanks";
+import AppBankList from "./AppBankList";
 
-ReactDOM.render(<AppBanks />, document.getElementById('root'));
+ReactDOM.render(<AppBankList />, document.getElementById('root'));
