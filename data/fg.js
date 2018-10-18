@@ -27,7 +27,8 @@ module.exports = {
         // this.fetchAndSaveActiveBanks();
         // this.extractAndSaveActiveBanks();
         // this.fetchAndSaveNotPayingBanks();
-        this.extractAndSaveNotPayingBanks();
+        // this.extractAndSaveNotPayingBanks();
+        this.fetchAndSaveBankDetails();
     },
 
     fetchAndSaveActiveBanks: function () {
@@ -38,6 +39,17 @@ module.exports = {
         utils.writeFile(this.htmlNotPayingBanksFile(), utils.readURL('http://www.fg.gov.ua/not-paying'));
     },
 
+    fetchAndSaveBankDetails: function () {
+        this.extractNotPayingBanks().forEach(bank => {
+            console.log(bank.name);
+            const file = this.htmlBankFile(this.buildBankId(bank.name.toLowerCase()));
+            if (!utils.fileExists(file)) {
+                utils.writeFile(file, utils.readURL('http://www.fg.gov.ua' + bank.link));
+            }
+        })
+    },
+
+    ////////// json \\\\\\\\\\
     extractAndSaveActiveBanks: function () {
         const banks = [];
         const html = utils.readFile(this.htmlActiveBanksFile());
@@ -59,6 +71,10 @@ module.exports = {
     },
 
     extractAndSaveNotPayingBanks: function () {
+        utils.writeFile(this.jsonNotPayingBanksFile(), utils.toJson(this.extractNotPayingBanks()));
+    },
+
+    extractNotPayingBanks: function () {
         const banks = [];
         const html = utils.readFile(this.htmlNotPayingBanksFile());
         const regex = /<h3 class="item-title"><a href="(\/.+?\/.+?\/.+?)">[\S\s]+?(.+?)<\/a>/g;
@@ -69,7 +85,11 @@ module.exports = {
                 link: matches[1]
             });
         }
-        utils.writeFile(this.jsonNotPayingBanksFile(), utils.toJson(banks));
+        return banks;
+    },
+
+    buildBankId(name) {
+        return name.toLowerCase();
     },
 
     ////////// files \\\\\\\\\\
@@ -79,6 +99,10 @@ module.exports = {
 
     htmlNotPayingBanksFile: function() {
         return path.resolve(this.htmlFolder(), 'banks-not-paying.html');
+    },
+
+    htmlBankFile: function(name) {
+        return path.resolve(this.htmlFolder(), 'banks', name + '.html');
     },
 
     jsonActiveBanksFile: function() {

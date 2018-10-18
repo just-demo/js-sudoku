@@ -4,9 +4,9 @@ let _ = require('lodash');
 let utils = require('./utils');
 
 // minfin.fetchAndSaveAllHtml();
-// fg.fetchAndSaveAllHtml();
+fg.fetchAndSaveAllHtml();
 // console.log(fg.getBanks());
-compareBanks();
+// compareBanks();
 
 function compareBanks() {
     const fgBanks = fg.getBanks();
