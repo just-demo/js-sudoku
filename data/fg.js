@@ -1,29 +1,27 @@
 let utils = require('./utils');
 let path = require('path');
+let _ = require('lodash');
 
 module.exports = {
-    getBanks: function() {
+    //https://www.bank.gov.ua/control/bankdict/banks
+    // https://bank.gov.ua/control/uk/bankdict/search?name=&type=369&region=&mfo=&edrpou=&size=&group=&fromDate=&toDate=
+    getBanks: function () {
         const banks = {};
-        utils.fromJson(utils.readFile(this.jsonActiveBanksFile())).forEach(bank => {
-            const id = bank.toLowerCase();
-            if (banks[id]) {
-                console.log(id + ': ' + bank + ' != ' + banks[id]);
-            }
-            banks[id] = bank;
-        });
-
-        utils.fromJson(utils.readFile(this.jsonNotPayingBanksFile())).forEach(bank => {
+        _.union(
+            utils.fromJson(utils.readFile(this.jsonActiveBanksFile())),
+            utils.fromJson(utils.readFile(this.jsonNotPayingBanksFile()))
+        ).forEach(bank => {
             const id = bank.name.toLowerCase();
             if (banks[id]) {
-                console.log(id + ': ' + bank.name + ' != ' + banks[id]);
+                console.log(id + ': ' + bank.name + ' != ' + banks[id].name);
             }
-            banks[id] = bank.name;
+            banks[id] = bank;
         });
         return banks;
     },
 
     ////////// html \\\\\\\\\\
-    fetchAndSaveAllHtml: function(){
+    fetchAndSaveAllHtml: function () {
         // this.fetchAndSaveActiveBanks();
         this.extractAndSaveActiveBanks();
         // this.fetchAndSaveNotPayingBanks();
@@ -63,37 +61,34 @@ module.exports = {
                 site: this.extractBankPureSites(matches[7]),
             });
         }
+
+        console.log('Many sites=' + banks.filter(bank => bank.site.length > 1).length);
         utils.writeFile(this.jsonActiveBanksFile(), utils.toJson(banks));
     },
 
-
     extractBankPureSites(bankFullSite) {
-        bankFullSite = bankFullSite.replace(/&nbsp;/g, '').trim();
+        bankFullSite = bankFullSite
+            .replace(/&nbsp;/g, '')
+            .replace(/<strong>([^<]*)<\/strong>/g, '$1')
+            .trim();
         if (!bankFullSite) {
-            return null;
+            return [];
         }
 
-        const sites = new Set();
+        let sites = new Set();
         let matches;
-
-        const hrefRegex = /href="(.+?)"/g;
-        while ((matches = hrefRegex.exec(bankFullSite))) {
-            sites.add(matches[1]);
+        const regex = /href="(.+?)"|(http[^"<\s]+)|[^\/](www[^"<\s]+)/g;
+        while ((matches = regex.exec(bankFullSite))) {
+            let site = matches[1] || matches[2] || matches[3];
+            site = site.replace(/(?<!:|:\/)\/(?!ukraine$).*/g, '');
+            sites.add(site);
         }
 
-        let httpRegex = /(http[^"<\s]+)/g;
-        while ((matches = httpRegex.exec(bankFullSite))) {
-            sites.add(matches[1]);
-        }
-
-        const wwwRegex = /^\/(www[^"<\s]+)/g;
-        while ((matches = wwwRegex.exec(bankFullSite))) {
-            sites.add(matches[1]);
-        }
+        sites = this.removeDuplicateSites(sites);
 
         if (!sites.size) {
             console.log('No matches', bankFullSite);
-            return bankFullSite;
+            sites.add(bankFullSite);
         }
 
         if (sites.size > 1) {
@@ -102,6 +97,22 @@ module.exports = {
         }
 
         return Array.from(sites);
+    },
+
+    removeDuplicateSites(sites) {
+        const result = new Set(sites);
+        sites.forEach(site => {
+            const isDuplicate = ['https', 'http']
+                .map(schema => schema + '://')
+                .filter(schemaPrefix => !site.startsWith(schemaPrefix))
+                .map(schemaPrefix => schemaPrefix + site)
+                .filter(siteWithSchema => sites.has(siteWithSchema))
+                .length;
+            if (isDuplicate) {
+                result.delete(site);
+            }
+        });
+        return result;
     },
 
     extractBankPureName(bankFullName) {
@@ -136,35 +147,35 @@ module.exports = {
     },
 
     ////////// files \\\\\\\\\\
-    htmlActiveBanksFile: function() {
+    htmlActiveBanksFile: function () {
         return path.resolve(this.htmlFolder(), 'banks-active.html');
     },
 
-    htmlNotPayingBanksFile: function() {
+    htmlNotPayingBanksFile: function () {
         return path.resolve(this.htmlFolder(), 'banks-not-paying.html');
     },
 
-    htmlBankFile: function(name) {
+    htmlBankFile: function (name) {
         return path.resolve(this.htmlFolder(), 'banks', name + '.html');
     },
 
-    jsonActiveBanksFile: function() {
+    jsonActiveBanksFile: function () {
         return path.resolve(this.jsonFolder(), 'banks-active.json');
     },
 
-    jsonNotPayingBanksFile: function() {
+    jsonNotPayingBanksFile: function () {
         return path.resolve(this.jsonFolder(), 'banks-not-paying.json');
     },
 
-    htmlFolder: function() {
+    htmlFolder: function () {
         return path.resolve(this.dataFolder(), 'html');
     },
 
-    jsonFolder: function() {
+    jsonFolder: function () {
         return path.resolve(this.dataFolder(), 'json');
     },
 
-    dataFolder: function() {
+    dataFolder: function () {
         return path.resolve('.', 'fg');
     }
 };

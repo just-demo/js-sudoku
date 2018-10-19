@@ -4,9 +4,9 @@ let _ = require('lodash');
 let utils = require('./utils');
 
 // minfin.fetchAndSaveAllHtml();
-fg.fetchAndSaveAllHtml();
+// fg.fetchAndSaveAllHtml();
 // console.log(fg.getBanks());
-// compareBanks();
+compareBanks();
 
 function compareBanks() {
     const fgBanks = fg.getBanks();
@@ -21,8 +21,9 @@ function compareBanks() {
     const banks = _.union(fgBankIds, mfBanksIds).sort().map(id => {
         return {
             id: id,
-            fg: fgBanks[id],
+            fg: (fgBanks[id] || {}).name,
             mf: mfBanks[id],
+            site: (fgBanks[id] || {}).site
         };
     });
 
