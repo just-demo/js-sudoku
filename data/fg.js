@@ -25,10 +25,10 @@ module.exports = {
     ////////// html \\\\\\\\\\
     fetchAndSaveAllHtml: function(){
         // this.fetchAndSaveActiveBanks();
-        // this.extractAndSaveActiveBanks();
+        this.extractAndSaveActiveBanks();
         // this.fetchAndSaveNotPayingBanks();
         // this.extractAndSaveNotPayingBanks();
-        this.fetchAndSaveBankDetails();
+        // this.fetchAndSaveBankDetails();
     },
 
     fetchAndSaveActiveBanks: function () {
@@ -53,12 +53,55 @@ module.exports = {
     extractAndSaveActiveBanks: function () {
         const banks = [];
         const html = utils.readFile(this.htmlActiveBanksFile());
-        const regex = /<td>(.+?)<\/td>/g;
+        const regex = /<tr.*?>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>(.*?)<\/td>\s+?<td.*?>([\S\s]*?)<\/td>\s+?<\/tr>/g;
+
         let matches;
         while ((matches = regex.exec(html))) {
-            banks.push(this.extractBankPureName(matches[1]));
+            banks.push({
+                name: this.extractBankPureName(matches[2]),
+                date: matches[4].split('.').reverse().join('-'),
+                site: this.extractBankPureSites(matches[7]),
+            });
         }
         utils.writeFile(this.jsonActiveBanksFile(), utils.toJson(banks));
+    },
+
+
+    extractBankPureSites(bankFullSite) {
+        bankFullSite = bankFullSite.replace(/&nbsp;/g, '').trim();
+        if (!bankFullSite) {
+            return null;
+        }
+
+        const sites = new Set();
+        let matches;
+
+        const hrefRegex = /href="(.+?)"/g;
+        while ((matches = hrefRegex.exec(bankFullSite))) {
+            sites.add(matches[1]);
+        }
+
+        let httpRegex = /(http[^"<\s]+)/g;
+        while ((matches = httpRegex.exec(bankFullSite))) {
+            sites.add(matches[1]);
+        }
+
+        const wwwRegex = /^\/(www[^"<\s]+)/g;
+        while ((matches = wwwRegex.exec(bankFullSite))) {
+            sites.add(matches[1]);
+        }
+
+        if (!sites.size) {
+            console.log('No matches', bankFullSite);
+            return bankFullSite;
+        }
+
+        if (sites.size > 1) {
+            console.log(bankFullSite);
+            console.log(sites);
+        }
+
+        return Array.from(sites);
     },
 
     extractBankPureName(bankFullName) {
