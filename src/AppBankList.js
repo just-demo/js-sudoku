@@ -6,15 +6,11 @@ import 'bootstrap/dist/css/bootstrap.css'
 class AppBankList extends Component {
     constructor(props) {
         super(props);
-        /*
-        var someProperty = {...this.state.someProperty}
-someProperty.flag = true;
-this.setState({someProperty})
-*/
         this.state = {
             filter: {
                 red: true,
                 green: true,
+                brown: true,
                 orange: true,
                 yellow: true
             },
@@ -51,6 +47,7 @@ this.setState({someProperty})
                     <tr>
                         {/*<th>&nbsp;</th>*/}
                         <th>Site</th>
+                        <th><a href="https://bank.gov.ua">bank.gov.ua</a></th>
                         <th><a href="http://www.fg.gov.ua">www.fg.gov.ua</a></th>
                         <th><a href="https://minfin.com.ua">minfin.com.ua</a></th>
                     </tr>
@@ -60,6 +57,7 @@ this.setState({someProperty})
                             <td>{(bank.site || []).map(site => (
                                 <p><a href={site}>{site}</a></p>
                             ))}</td>
+                            <td>{bank.bg}</td>
                             <td>{bank.fg}</td>
                             <td>{bank.mf}</td>
                         </tr>
@@ -74,8 +72,10 @@ this.setState({someProperty})
         let color;
         if (bank.site && bank.site.length > 1) {
             color = 'red';
-        } else if (bank.fg && bank.mf) {
+        } else if (bank.bg && bank.fg && bank.mf) {
             color = 'green';
+        } else if (bank.bg && !bank.fg) {
+            color = 'brown';
         } else if (bank.fg) {
             color = 'orange';
         } else {
