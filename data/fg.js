@@ -3,7 +3,7 @@ let path = require('path');
 let _ = require('lodash');
 
 module.exports = {
-    //https://www.bank.gov.ua/control/bankdict/banks
+    // https://www.bank.gov.ua/control/bankdict/banks
     // https://bank.gov.ua/control/uk/bankdict/search?name=&type=369&region=&mfo=&edrpou=&size=&group=&fromDate=&toDate=
     getBanks: function () {
         const banks = {};
@@ -22,11 +22,11 @@ module.exports = {
 
     ////////// html \\\\\\\\\\
     fetchAndSaveAllHtml: function () {
-        // this.fetchAndSaveActiveBanks();
+        this.fetchAndSaveActiveBanks();
         this.extractAndSaveActiveBanks();
-        // this.fetchAndSaveNotPayingBanks();
-        // this.extractAndSaveNotPayingBanks();
-        // this.fetchAndSaveBankDetails();
+        this.fetchAndSaveNotPayingBanks();
+        this.extractAndSaveNotPayingBanks();
+        this.fetchAndSaveBankDetails();
     },
 
     fetchAndSaveActiveBanks: function () {

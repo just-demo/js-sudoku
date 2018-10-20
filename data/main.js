@@ -1,12 +1,14 @@
 let minfin = require('./minfin');
 let fg = require('./fg');
+let bankGov = require('./bank.gov');
 let _ = require('lodash');
 let utils = require('./utils');
 
 // minfin.fetchAndSaveAllHtml();
 // fg.fetchAndSaveAllHtml();
-// console.log(fg.getBanks());
-compareBanks();
+// bankGov.fetchAndSaveAllHtml();
+// compareBanks();
+console.log(bankGov.getBanks());
 
 function compareBanks() {
     const fgBanks = fg.getBanks();
@@ -27,5 +29,5 @@ function compareBanks() {
         };
     });
 
-    utils.writeFile('./banks.json', utils.toJson(banks));
+    utils.writeFile('./combined/banks.json', utils.toJson(banks));
 }
