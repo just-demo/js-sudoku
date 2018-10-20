@@ -5,13 +5,21 @@ let _ = require('lodash');
 module.exports = {
     // https://www.bank.gov.ua/control/bankdict/banks
     // https://bank.gov.ua/control/uk/bankdict/search?name=&type=369&region=&mfo=&edrpou=&size=&group=&fromDate=&toDate=
+    getActiveBanks: function () {
+        const banks = {};
+        utils.fromJson(utils.readFile(this.jsonActiveBanksFile())).forEach(bank => {
+            banks[this.buildBankId(bank.name)] = bank;
+        });
+        return banks;
+    },
+
     getBanks: function () {
         const banks = {};
         _.union(
             utils.fromJson(utils.readFile(this.jsonActiveBanksFile())),
             utils.fromJson(utils.readFile(this.jsonNotPayingBanksFile()))
         ).forEach(bank => {
-            const id = bank.name.toLowerCase();
+            const id = this.buildBankId(bank.name);
             if (banks[id]) {
                 console.log(id + ': ' + bank.name + ' != ' + banks[id].name);
             }
@@ -40,7 +48,7 @@ module.exports = {
     fetchAndSaveBankDetails: function () {
         this.extractNotPayingBanks().forEach(bank => {
             console.log(bank.name);
-            const file = this.htmlBankFile(this.buildBankId(bank.name.toLowerCase()));
+            const file = this.htmlBankFile(this.buildBankId(bank.name));
             if (!utils.fileExists(file)) {
                 utils.writeFile(file, utils.readURL('http://www.fg.gov.ua' + bank.link));
             }

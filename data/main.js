@@ -40,11 +40,25 @@ function compareBanks() {
 
 function compareGovBanks() {
     const bgBanks = bankGov.getBanks();
-    const fgBanks = fg.getBanks();
+    const fgBanks = fg.getActiveBanks();
+    //     _.pickBy(fg.getBanks(), function(bank, id) {
+    //     return !bank.link;
+    // });
+
     const bgBankIds = Object.keys(bgBanks);
     const fgBankIds = Object.keys(fgBanks);
     console.log(bgBankIds.length);
     console.log(fgBankIds.length);
     console.log(_.intersection(bgBankIds, fgBankIds).length);
     console.log(_.union(bgBankIds, fgBankIds).length);
+
+    const banks = _.union(bgBankIds, fgBankIds).sort().map(id => {
+        return {
+            id: id,
+            bg: (bgBanks[id] || {}).name,
+            fg: (fgBanks[id] || {}).name
+        };
+    });
+
+    utils.writeFile('../public/banks.gov.json', utils.toJson(banks));
 }

@@ -5,5 +5,6 @@ import App from "./App";
 import Game from "./Game";
 import AppBanks from "./AppBanks";
 import AppBankList from "./AppBankList";
+import AppBankGovList from "./AppBankGovList";
 
-ReactDOM.render(<AppBankList />, document.getElementById('root'));
+ReactDOM.render(<AppBankGovList />, document.getElementById('root'));
